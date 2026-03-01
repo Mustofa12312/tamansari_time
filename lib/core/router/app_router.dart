@@ -11,6 +11,7 @@ import '../../presentation/screens/settings/settings_screen.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_strings.dart';
 import '../../core/constants/app_typography.dart';
+import '../../presentation/screens/calendar/calendar_screen.dart';
 import '../../presentation/screens/splash/splash_screen.dart';
 
 class AppRouter {
@@ -27,6 +28,10 @@ class AppRouter {
           GoRoute(
             path: '/home',
             builder: (context, state) => const HomeScreen(),
+          ),
+          GoRoute(
+            path: '/calendar',
+            builder: (context, state) => const CalendarScreen(),
           ),
           GoRoute(
             path: '/qibla',
@@ -59,10 +64,10 @@ class _MainShell extends StatelessWidget {
         final location = GoRouterState.of(context).uri.toString();
         int currentIndex = 0;
         if (location.startsWith('/home')) currentIndex = 0;
-        if (location.startsWith('/qibla')) currentIndex = 1;
-        if (location.startsWith('/tasbih')) currentIndex = 2;
-        if (location.startsWith('/doa')) currentIndex = 3;
-        if (location.startsWith('/settings')) currentIndex = 4;
+        if (location.startsWith('/calendar')) currentIndex = 1;
+        if (location.startsWith('/qibla')) currentIndex = 2;
+        if (location.startsWith('/tasbih')) currentIndex = 3;
+        if (location.startsWith('/doa')) currentIndex = 4;
 
         return BlocBuilder<SettingsCubit, PrayerSettings>(
           builder: (context, _) => Scaffold(
@@ -93,28 +98,28 @@ class _MainShell extends StatelessWidget {
                 onTap: () => context.go('/home'),
               ),
               _NavItem(
-                icon: Icons.explore_rounded,
-                label: AppStrings.navQibla,
+                icon: Icons.calendar_today_rounded,
+                label: AppStrings.calendar,
                 isActive: currentIndex == 1,
+                onTap: () => context.go('/calendar'),
+              ),
+              _NavItem(
+                icon: Icons.navigation_rounded,
+                label: AppStrings.navQibla,
+                isActive: currentIndex == 2,
                 onTap: () => context.go('/qibla'),
               ),
               _NavItem(
                 icon: Icons.fingerprint_rounded,
                 label: AppStrings.navTasbih,
-                isActive: currentIndex == 2,
+                isActive: currentIndex == 3,
                 onTap: () => context.go('/tasbih'),
               ),
               _NavItem(
                 icon: Icons.menu_book_rounded,
                 label: AppStrings.navDoa,
-                isActive: currentIndex == 3,
-                onTap: () => context.go('/doa'),
-              ),
-              _NavItem(
-                icon: Icons.settings_rounded,
-                label: AppStrings.navSettings,
                 isActive: currentIndex == 4,
-                onTap: () => context.go('/settings'),
+                onTap: () => context.go('/doa'),
               ),
             ],
           ),
@@ -147,7 +152,7 @@ class _NavItem extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
           color: isActive
-              ? AppColors.accent.withOpacity(0.15)
+              ? AppColors.accent.withValues(alpha: 0.15)
               : Colors.transparent,
         ),
         child: Column(

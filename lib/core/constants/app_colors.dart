@@ -8,31 +8,31 @@ class AppColors {
   AppColors._();
 
   // ─── Brand ────────────────────────────────────────────────────────────────
-  static Color get primary =>
-      const Color(0xFF2C3A4B); // Dark Navy from reference
-  static Color get primaryLight => const Color(0xFF4A5A75);
-  static Color get primaryDark => const Color(0xFF1A2332);
-  static Color get accent =>
-      ThemeConfig.isDark ? const Color(0xFF38BDF8) : const Color(0xFF2C3A4B);
-  static Color get accentDark => const Color(0xFF1E293B);
+  static Color get primary => const Color(0xFF065F46); // Rich Emerald
+  static Color get primaryLight => const Color(0xFF10B981); // Bright Emerald
+  static Color get primaryDark => const Color(0xFF022C22); // Deep Forest
+
+  static Color get accent => const Color(0xFFD97706); // Amber / Gold
+  static Color get accentDark => const Color(0xFF92400E); // Deep Gold
 
   // ─── Neutral ──────────────────────────────────────────────────────────────
   static const Color white = Color(0xFFFFFFFF);
   static const Color black = Color(0xFF000000);
 
-  static Color get surface =>
-      ThemeConfig.isDark ? const Color(0xFF0F172A) : const Color(0xFFF4F6F9);
+  static Color get surface => ThemeConfig.isDark
+      ? const Color(0xFF0F172A)
+      : const Color(0xFFF8FAFC); // Very sleek gray-white
   static Color get surfaceLight =>
       ThemeConfig.isDark ? const Color(0xFF1E293B) : const Color(0xFFFFFFFF);
   static Color get cardDark =>
       ThemeConfig.isDark ? const Color(0xFF1E293B) : const Color(0xFFFFFFFF);
   static Color get cardLight =>
-      ThemeConfig.isDark ? const Color(0xFF0F172A) : const Color(0xFFF4F6F9);
+      ThemeConfig.isDark ? const Color(0xFF0F172A) : const Color(0xFFF1F5F9);
 
   static Color get textPrimary =>
-      ThemeConfig.isDark ? const Color(0xFFF8FAFC) : const Color(0xFF1E293B);
+      ThemeConfig.isDark ? const Color(0xFFF8FAFC) : const Color(0xFF0F172A);
   static Color get textSecondary =>
-      ThemeConfig.isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B);
+      ThemeConfig.isDark ? const Color(0xFF94A3B8) : const Color(0xFF475569);
   static Color get textMuted =>
       ThemeConfig.isDark ? const Color(0xFF475569) : const Color(0xFF94A3B8);
 
@@ -40,8 +40,9 @@ class AppColors {
       ThemeConfig.isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0);
 
   // ─── Specific UI Element Colors ───────────────────────────────────────────
-  static Color get calendarHighlight =>
-      const Color(0xFFE8EDF2); // Light blue-gray for unselected days
+  static Color get calendarHighlight => ThemeConfig.isDark
+      ? const Color(0xFF1E293B)
+      : const Color(0xFFECFDF5); // Faint emerald
 
   // ─── Solar Phase Gradients (Kept for compatibility, muted slightly) ───────
   static List<Color> get fajrGradient => const [
