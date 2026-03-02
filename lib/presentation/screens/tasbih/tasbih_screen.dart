@@ -54,29 +54,22 @@ class _TasbihScreenState extends State<TasbihScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.surface,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.transparent,
         title: Text(
           AppStrings.navTasbih,
-          style: AppTypography.titleLarge.copyWith(fontWeight: FontWeight.bold),
+          style: AppTypography.titleLarge.copyWith(
+            fontWeight: FontWeight.bold,
+            color: AppColors.textPrimary,
+          ),
         ),
         centerTitle: true,
+        iconTheme: IconThemeData(color: AppColors.textPrimary),
       ),
       body: Stack(
         children: [
-          // Background Decorative elements
-          Positioned(
-            top: -100,
-            right: -100,
-            child: Icon(
-              Icons.star_rounded,
-              size: 300,
-              color: AppColors.primary.withValues(alpha: 0.03),
-            ),
-          ),
-
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -87,17 +80,18 @@ class _TasbihScreenState extends State<TasbihScreen>
                   Text(
                     'SubhanAllah / Alhamdulillah',
                     style: AppTypography.labelLarge.copyWith(
-                      color: AppColors.textSecondary,
+                      color: AppColors.textPrimary.withValues(alpha: 0.7),
                       letterSpacing: 1.5,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                   const SizedBox(height: 16),
                   Text(
                     '$_count',
                     style: AppTypography.displayLarge.copyWith(
-                      fontSize: 100,
+                      fontSize: 120,
                       fontWeight: FontWeight.w900,
-                      color: AppColors.primary,
+                      color: AppColors.textPrimary,
                     ),
                   ),
                 ],
@@ -110,38 +104,37 @@ class _TasbihScreenState extends State<TasbihScreen>
                   child: ScaleTransition(
                     scale: _animation,
                     child: Container(
-                      width: 220,
-                      height: 220,
+                      width: 240,
+                      height: 240,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: AppColors.primary,
+                        color: AppColors.textPrimary.withValues(alpha: 0.15),
+                        border: Border.all(
+                          color: AppColors.textPrimary.withValues(alpha: 0.2),
+                          width: 2,
+                        ),
                         boxShadow: [
                           BoxShadow(
-                            color: AppColors.primary.withValues(alpha: 0.4),
-                            blurRadius: 30,
+                            color: Colors.black.withValues(alpha: 0.1),
+                            blurRadius: 40,
                             spreadRadius: 5,
-                            offset: const Offset(0, 15),
+                            offset: const Offset(0, 20),
                           ),
                         ],
-                        gradient: LinearGradient(
-                          colors: [AppColors.primary, AppColors.primaryLight],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
                       ),
                       child: Container(
-                        margin: const EdgeInsets.all(12),
+                        margin: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
+                          color: AppColors.textPrimary.withValues(alpha: 0.1),
                           border: Border.all(
-                            color: Colors.white.withValues(alpha: 0.2),
-                            width: 2,
+                            color: AppColors.textPrimary.withValues(alpha: 0.1),
                           ),
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.fingerprint_rounded,
-                          color: Colors.white,
-                          size: 80,
+                          color: AppColors.textPrimary,
+                          size: 100,
                         ),
                       ),
                     ),
@@ -157,13 +150,16 @@ class _TasbihScreenState extends State<TasbihScreen>
                   icon: const Icon(Icons.refresh_rounded),
                   label: const Text('Reset Counter'),
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: AppColors.error,
+                    foregroundColor: AppColors.textPrimary,
                     side: BorderSide(
-                      color: AppColors.error.withValues(alpha: 0.5),
+                      color: AppColors.textPrimary.withValues(alpha: 0.3),
+                    ),
+                    backgroundColor: AppColors.textPrimary.withValues(
+                      alpha: 0.1,
                     ),
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 24,
-                      vertical: 12,
+                      horizontal: 32,
+                      vertical: 16,
                     ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),

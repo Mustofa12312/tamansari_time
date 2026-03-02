@@ -5,41 +5,68 @@ import '../models/location_model.dart';
 import '../../core/constants/app_strings.dart';
 
 /// Multi-strategy location service:
-/// 1. GPS getCurrentPosition
-/// 2. getLastKnownPosition
-/// 3. Hive cached coordinates
-/// 4. Jakarta default (emergency fallback)
+/// 1. If not forceRefresh → return cached location (or Jakarta default)
+/// 2. If forceRefresh or no cache → check/request permission, get GPS
+/// 3. On permission denied/timeout → try last known position
+/// 4. Final fallback: cached Hive data or Jakarta default
 class LocationService {
+  /// Get location.
+  /// - [forceRefresh] = false → return cached/default immediately (fast startup)
+  /// - [forceRefresh] = true  → request GPS (triggered by user pressing GPS btn)
   Future<LocationModel> getCurrentLocation({bool forceRefresh = false}) async {
-    // If not forcing refresh, try to read from Hive cache first
     if (!forceRefresh) {
+      // Try cache first for instant startup
       final cached = _getCachedLocation();
       if (cached != null) return cached;
-      return LocationModel
-          .defaultJakarta; // Return Jakarta if no cache and no force refresh
+
+      // No cache yet — try GPS silently (permission may already be granted)
+      try {
+        final permission = await Geolocator.checkPermission();
+        if (permission == LocationPermission.always ||
+            permission == LocationPermission.whileInUse) {
+          // Permission already granted, get GPS quietly
+          final position = await Geolocator.getCurrentPosition(
+            desiredAccuracy: LocationAccuracy.medium,
+            timeLimit: const Duration(seconds: 8),
+          );
+          final model = await _positionToModel(position);
+          _cacheLocation(model);
+          return model;
+        }
+      } catch (_) {
+        // Silent fail — return default below
+      }
+
+      return LocationModel.defaultJakarta;
     }
 
-    // Step 1: Check and request permission
+    // ── Force Refresh: User explicitly tapped GPS button ──────────────────
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
     }
 
     if (permission == LocationPermission.deniedForever) {
+      // Permission permanently denied, open settings
+      await Geolocator.openAppSettings();
       return _getCachedOrDefault();
     }
 
-    // Step 2: Try GPS with timeout
+    if (permission == LocationPermission.denied) {
+      return _getCachedOrDefault();
+    }
+
+    // Permission granted — get accurate position
     try {
       final position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
-        timeLimit: const Duration(seconds: 10),
+        timeLimit: const Duration(seconds: 12),
       );
       final model = await _positionToModel(position);
       _cacheLocation(model);
       return model;
     } catch (_) {
-      // Step 3: Try last known position
+      // Fallback: try last known position
       try {
         final last = await Geolocator.getLastKnownPosition();
         if (last != null) {
@@ -49,7 +76,6 @@ class LocationService {
         }
       } catch (_) {}
 
-      // Step 4: Read from Hive cache
       return _getCachedOrDefault();
     }
   }
@@ -61,13 +87,12 @@ class LocationService {
       final placemarks = await placemarkFromCoordinates(
         position.latitude,
         position.longitude,
-      ).timeout(const Duration(seconds: 5));
+      ).timeout(const Duration(seconds: 6));
       if (placemarks.isNotEmpty) {
+        final p = placemarks.first;
         city =
-            placemarks.first.locality ??
-            placemarks.first.subAdministrativeArea ??
-            '';
-        country = placemarks.first.country ?? 'Indonesia';
+            p.locality ?? p.subAdministrativeArea ?? p.administrativeArea ?? '';
+        country = p.country ?? 'Indonesia';
       }
     } catch (_) {}
 

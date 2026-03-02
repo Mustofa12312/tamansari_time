@@ -71,7 +71,17 @@ class _MainShell extends StatelessWidget {
 
         return BlocBuilder<SettingsCubit, PrayerSettings>(
           builder: (context, _) => Scaffold(
-            body: child,
+            backgroundColor: Colors.transparent,
+            body: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [AppColors.primary, AppColors.primaryLight],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+              ),
+              child: child,
+            ),
             bottomNavigationBar: _buildBottomNav(context, currentIndex),
           ),
         );
@@ -82,12 +92,17 @@ class _MainShell extends StatelessWidget {
   Widget _buildBottomNav(BuildContext context, int currentIndex) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.cardDark,
-        border: Border(top: BorderSide(color: AppColors.divider, width: 1)),
+        color: AppColors.primaryDark,
+        border: Border(
+          top: BorderSide(
+            color: AppColors.white.withValues(alpha: 0.1),
+            width: 0.5,
+          ),
+        ),
       ),
       child: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8),
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
@@ -146,33 +161,35 @@ class _NavItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
+      behavior: HitTestBehavior.opaque,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        duration: const Duration(milliseconds: 250),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
           color: isActive
-              ? AppColors.accent.withValues(alpha: 0.15)
+              ? AppColors.white.withValues(alpha: 0.1)
               : Colors.transparent,
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            AnimatedScale(
-              scale: isActive ? 1.15 : 1.0,
-              duration: const Duration(milliseconds: 200),
-              child: Icon(
-                icon,
-                color: isActive ? AppColors.accent : AppColors.textMuted,
-                size: 24,
-              ),
+            Icon(
+              icon,
+              color: isActive
+                  ? AppColors.white
+                  : AppColors.white.withValues(alpha: 0.5),
+              size: 24,
             ),
             const SizedBox(height: 4),
             Text(
               label,
               style: AppTypography.labelSmall.copyWith(
-                color: isActive ? AppColors.accent : AppColors.textMuted,
+                color: isActive
+                    ? AppColors.white
+                    : AppColors.white.withValues(alpha: 0.5),
                 fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
+                fontSize: 10,
               ),
             ),
           ],

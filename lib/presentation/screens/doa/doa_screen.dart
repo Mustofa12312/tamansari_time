@@ -109,7 +109,7 @@ class _DoaScreenState extends State<DoaScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.surface,
+      backgroundColor: Colors.transparent,
       body: CustomScrollView(
         physics: const BouncingScrollPhysics(),
         slivers: [
@@ -135,71 +135,59 @@ class _DoaScreenState extends State<DoaScreen> {
       floating: false,
       pinned: true,
       elevation: 0,
-      backgroundColor: AppColors.primary,
+      backgroundColor: Colors.transparent,
+      iconTheme: IconThemeData(color: AppColors.textPrimary),
       flexibleSpace: FlexibleSpaceBar(
-        background: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [AppColors.primary, AppColors.primaryLight],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
-          child: Stack(
-            children: [
-              Positioned(
-                bottom: -20,
-                right: -20,
-                child: Icon(
-                  Icons.menu_book_rounded,
-                  size: 150,
-                  color: Colors.white.withValues(alpha: 0.1),
-                ),
+        background: Stack(
+          children: [
+            Positioned(
+              bottom: -20,
+              right: -20,
+              child: Icon(
+                Icons.menu_book_rounded,
+                size: 150,
+                color: AppColors.textPrimary.withValues(alpha: 0.1),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
         title: Text(
           AppStrings.navDoa,
           style: AppTypography.titleLarge.copyWith(
-            color: Colors.white,
+            color: AppColors.textPrimary,
             fontWeight: FontWeight.bold,
           ),
         ),
         centerTitle: true,
       ),
       bottom: PreferredSize(
-        preferredSize: const Size.fromHeight(60),
+        preferredSize: const Size.fromHeight(80),
         child: Container(
-          height: 60,
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-          decoration: BoxDecoration(
-            color: AppColors.surface,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
-          ),
+          padding: const EdgeInsets.fromLTRB(20, 10, 20, 20),
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16),
+            height: 54,
             decoration: BoxDecoration(
-              color: AppColors.cardDark,
-              borderRadius: BorderRadius.circular(15),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
-                  blurRadius: 10,
-                ),
-              ],
+              color: AppColors.textPrimary.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: AppColors.textPrimary.withValues(alpha: 0.1),
+              ),
             ),
             child: TextField(
               controller: _searchController,
               onChanged: (val) => setState(() => _searchQuery = val),
+              style: AppTypography.bodyMedium.copyWith(
+                color: AppColors.textPrimary,
+              ),
               decoration: InputDecoration(
                 hintText: 'Cari doa...',
                 hintStyle: AppTypography.labelMedium.copyWith(
-                  color: AppColors.textMuted,
+                  color: AppColors.textPrimary.withValues(alpha: 0.5),
                 ),
                 icon: Icon(
                   Icons.search_rounded,
-                  color: AppColors.primary,
+                  color: AppColors.textPrimary,
                   size: 20,
                 ),
                 border: InputBorder.none,
@@ -233,17 +221,19 @@ class _DoaScreenState extends State<DoaScreen> {
                   setState(() => _selectedCategory = cat);
                 }
               },
-              selectedColor: AppColors.primary,
-              backgroundColor: AppColors.cardDark,
+              selectedColor: AppColors.textPrimary.withValues(alpha: 0.2),
+              backgroundColor: AppColors.textPrimary.withValues(alpha: 0.1),
               labelStyle: AppTypography.labelSmall.copyWith(
-                color: isSelected ? Colors.white : AppColors.textPrimary,
+                color: AppColors.textPrimary,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               ),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
               ),
               side: BorderSide(
-                color: isSelected ? AppColors.primary : AppColors.divider,
+                color: isSelected
+                    ? AppColors.textPrimary.withValues(alpha: 0.5)
+                    : AppColors.textPrimary.withValues(alpha: 0.1),
               ),
               showCheckmark: false,
             ),
@@ -256,17 +246,13 @@ class _DoaScreenState extends State<DoaScreen> {
   Widget _buildDoaCard(Map<String, String> doa) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: AppColors.cardDark,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 15,
-            offset: const Offset(0, 8),
-          ),
-        ],
+        color: AppColors.textPrimary.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(28),
+        border: Border.all(
+          color: AppColors.textPrimary.withValues(alpha: 0.05),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -276,12 +262,12 @@ class _DoaScreenState extends State<DoaScreen> {
             children: [
               Container(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 4,
+                  horizontal: 12,
+                  vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color: AppColors.accent.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
+                  color: AppColors.textPrimary.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
                   doa['category']!,
@@ -294,8 +280,8 @@ class _DoaScreenState extends State<DoaScreen> {
               IconButton(
                 icon: Icon(
                   Icons.copy_rounded,
-                  size: 18,
-                  color: AppColors.textMuted,
+                  size: 20,
+                  color: AppColors.textPrimary.withValues(alpha: 0.6),
                 ),
                 onPressed: () {
                   Clipboard.setData(
@@ -305,16 +291,17 @@ class _DoaScreenState extends State<DoaScreen> {
                     ),
                   );
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Doa disalin ke clipboard'),
-                      duration: Duration(seconds: 1),
+                    SnackBar(
+                      content: const Text('Doa disalin ke clipboard'),
+                      backgroundColor: AppColors.primary,
+                      duration: const Duration(seconds: 1),
                     ),
                   );
                 },
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
           Text(
             doa['title']!,
             style: AppTypography.titleLarge.copyWith(
@@ -327,29 +314,28 @@ class _DoaScreenState extends State<DoaScreen> {
             doa['arabic']!,
             textAlign: TextAlign.right,
             style: TextStyle(
-              fontSize: 28,
-              fontFamily:
-                  'Amiri', // Assuming common fallback or user might have it
-              color: AppColors.primary,
+              fontSize: 32,
+              fontFamily: 'Amiri',
+              color: AppColors.textPrimary,
               fontWeight: FontWeight.bold,
               height: 1.8,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
           Text(
             doa['latin']!,
             style: AppTypography.bodyMedium.copyWith(
-              color: AppColors.textSecondary,
+              color: AppColors.textPrimary.withValues(alpha: 0.7),
               fontStyle: FontStyle.italic,
               fontWeight: FontWeight.w500,
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: AppColors.surface,
-              borderRadius: BorderRadius.circular(12),
+              color: AppColors.textPrimary.withValues(alpha: 0.05),
+              borderRadius: BorderRadius.circular(16),
             ),
             child: Text(
               doa['translation']!,

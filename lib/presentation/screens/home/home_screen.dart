@@ -39,7 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.surface,
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -50,51 +50,81 @@ class _HomeScreenState extends State<HomeScreen> {
               AppStrings.appName,
               style: AppTypography.titleLarge.copyWith(
                 fontWeight: FontWeight.bold,
-                color: AppColors.primary,
+                color: AppColors.white,
               ),
             ),
             BlocBuilder<PrayerBloc, PrayerState>(
               builder: (context, state) {
-                String city = 'Mencari lokasi...';
+                final isLoading = state is PrayerLoading;
+                String city = 'Memuat lokasi...';
                 if (state is PrayerLoaded) {
                   city = state.location.city.isNotEmpty
                       ? state.location.city
                       : 'Jakarta, Indonesia';
+                } else if (state is PrayerError) {
+                  city = 'Tap untuk retry';
                 }
                 return GestureDetector(
-                  onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: const Text('Sedang mencari lokasi akurat...'),
-                        backgroundColor: AppColors.primary,
-                        duration: const Duration(seconds: 2),
-                      ),
-                    );
-                    context.read<PrayerBloc>().add(
-                      const LoadPrayerTimes(forceLocationRefresh: true),
-                    );
-                  },
+                  onTap: isLoading
+                      ? null
+                      : () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Row(
+                                children: const [
+                                  Icon(
+                                    Icons.gps_fixed,
+                                    color: Colors.white,
+                                    size: 16,
+                                  ),
+                                  SizedBox(width: 8),
+                                  Text('Memperbarui lokasi GPS...'),
+                                ],
+                              ),
+                              backgroundColor: AppColors.primaryDark,
+                              duration: const Duration(seconds: 3),
+                              behavior: SnackBarBehavior.floating,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                          );
+                          context.read<PrayerBloc>().add(
+                            const LoadPrayerTimes(forceLocationRefresh: true),
+                          );
+                        },
                   child: Row(
                     children: [
                       Icon(
-                        Icons.map_rounded,
-                        size: 14,
-                        color: AppColors.primaryLight,
+                        Icons.location_on_rounded,
+                        size: 13,
+                        color: AppColors.white.withValues(alpha: 0.75),
                       ),
-                      const SizedBox(width: 4),
+                      const SizedBox(width: 3),
                       Text(
                         city,
                         style: AppTypography.labelSmall.copyWith(
-                          color: AppColors.textSecondary,
+                          color: AppColors.white.withValues(alpha: 0.85),
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      const SizedBox(width: 4),
-                      Icon(
-                        Icons.my_location_rounded,
-                        size: 14,
-                        color: AppColors.accent,
-                      ),
+                      const SizedBox(width: 5),
+                      isLoading
+                          ? SizedBox(
+                              width: 10,
+                              height: 10,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 1.5,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  AppColors.accent,
+                                ),
+                              ),
+                            )
+                          : Icon(
+                              Icons.refresh_rounded,
+                              size: 13,
+                              color: AppColors.accent,
+                            ),
                     ],
                   ),
                 );
@@ -104,7 +134,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.settings_rounded, color: AppColors.textPrimary),
+            icon: const Icon(Icons.settings_rounded, color: AppColors.white),
             onPressed: () => context.push('/settings'),
           ),
           const SizedBox(width: 8),
@@ -112,7 +142,8 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: SafeArea(
         child: RefreshIndicator(
-          color: AppColors.primary,
+          color: AppColors.accent,
+          backgroundColor: AppColors.white,
           onRefresh: () async {
             context.read<PrayerBloc>().add(
               const LoadPrayerTimes(forceLocationRefresh: true),
@@ -123,7 +154,7 @@ class _HomeScreenState extends State<HomeScreen> {
             slivers: [
               const SliverToBoxAdapter(child: SizedBox(height: 16)),
               _buildHeroCountdown(context),
-              const SliverToBoxAdapter(child: SizedBox(height: 32)),
+              const SliverToBoxAdapter(child: SizedBox(height: 16)),
               _buildPrayerList(context),
               const SliverToBoxAdapter(
                 child: SizedBox(height: 40), // Bottom padding
@@ -145,10 +176,17 @@ class _HomeScreenState extends State<HomeScreen> {
               return Container(
                 height: 200,
                 decoration: BoxDecoration(
-                  color: AppColors.cardDark,
+                  color: AppColors.white.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(32),
+                  border: Border.all(
+                    color: AppColors.white.withValues(alpha: 0.1),
+                  ),
                 ),
-                child: const Center(child: CircularProgressIndicator()),
+                child: Center(
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(AppColors.white),
+                  ),
+                ),
               );
             }
 
@@ -161,17 +199,16 @@ class _HomeScreenState extends State<HomeScreen> {
             return Container(
               padding: const EdgeInsets.all(32),
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [AppColors.primary, AppColors.primaryLight],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
+                color: AppColors.white.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(36),
+                border: Border.all(
+                  color: AppColors.white.withValues(alpha: 0.15),
                 ),
-                borderRadius: BorderRadius.circular(32),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.primaryLight.withValues(alpha: 0.4),
-                    blurRadius: 24,
-                    offset: const Offset(0, 12),
+                    color: AppColors.primaryDark.withValues(alpha: 0.3),
+                    blurRadius: 20,
+                    offset: const Offset(0, 8),
                   ),
                 ],
               ),
@@ -375,23 +412,16 @@ class _PrayerCard extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       decoration: BoxDecoration(
-        color: highlight ? AppColors.calendarHighlight : AppColors.cardDark,
-        borderRadius: BorderRadius.circular(20),
+        color: highlight
+            ? AppColors.white.withValues(alpha: 0.18)
+            : AppColors.white.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(24),
         border: Border.all(
           color: highlight
-              ? AppColors.primary.withValues(alpha: 0.2)
-              : Colors.transparent,
-          width: 1.5,
+              ? AppColors.white.withValues(alpha: 0.25)
+              : AppColors.white.withValues(alpha: 0.08),
+          width: 1,
         ),
-        boxShadow: highlight
-            ? []
-            : [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.02),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
       ),
       child: Row(
         children: [
@@ -399,13 +429,15 @@ class _PrayerCard extends StatelessWidget {
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               color: highlight
-                  ? AppColors.primary.withValues(alpha: 0.1)
-                  : AppColors.surface,
+                  ? AppColors.accent.withValues(alpha: 0.25)
+                  : AppColors.white.withValues(alpha: 0.08),
               shape: BoxShape.circle,
             ),
             child: Icon(
               icon,
-              color: highlight ? AppColors.primary : AppColors.textMuted,
+              color: highlight
+                  ? AppColors.accent
+                  : AppColors.white.withValues(alpha: 0.7),
               size: 24,
             ),
           ),
@@ -418,9 +450,7 @@ class _PrayerCard extends StatelessWidget {
                   name,
                   style: AppTypography.titleMedium.copyWith(
                     fontWeight: highlight ? FontWeight.bold : FontWeight.w600,
-                    color: highlight
-                        ? AppColors.primary
-                        : AppColors.textPrimary,
+                    color: AppColors.white,
                   ),
                 ),
                 if (highlight) ...[
@@ -429,6 +459,7 @@ class _PrayerCard extends StatelessWidget {
                     isNext ? 'Waktu berikutnya' : 'Waktu saat ini',
                     style: AppTypography.labelSmall.copyWith(
                       color: AppColors.accent,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ],
@@ -439,7 +470,9 @@ class _PrayerCard extends StatelessWidget {
             formattedTime,
             style: AppTypography.headlineSmall.copyWith(
               fontWeight: highlight ? FontWeight.w800 : FontWeight.w600,
-              color: highlight ? AppColors.primary : AppColors.textPrimary,
+              color: highlight
+                  ? AppColors.white
+                  : AppColors.white.withValues(alpha: 0.8),
             ),
           ),
         ],

@@ -10,6 +10,7 @@ class DualCalendarCell extends StatelessWidget {
   final bool isFocused;
   final bool isOutside;
   final bool isHijriPrimary;
+  final bool isDarkBg;
   final VoidCallback? onTap;
 
   const DualCalendarCell({
@@ -20,6 +21,7 @@ class DualCalendarCell extends StatelessWidget {
     this.isFocused = false,
     this.isOutside = false,
     this.isHijriPrimary = false,
+    this.isDarkBg = false,
     this.onTap,
   });
 
@@ -37,19 +39,32 @@ class DualCalendarCell extends StatelessWidget {
     final hijri = HijriCalendar.fromDate(date);
 
     Color background = Colors.transparent;
-    Color textColor = isOutside ? AppColors.textMuted : AppColors.textPrimary;
-    Color hijriColor = isOutside
-        ? AppColors.textMuted.withValues(alpha: 0.5)
+    Color textColor = isDarkBg ? AppColors.white : AppColors.textPrimary;
+    Color hijriColor = isDarkBg
+        ? AppColors.white.withValues(alpha: 0.5)
         : AppColors.textSecondary;
 
+    if (isOutside) {
+      textColor = isDarkBg
+          ? AppColors.white.withValues(alpha: 0.3)
+          : AppColors.textMuted;
+      hijriColor = isDarkBg
+          ? AppColors.white.withValues(alpha: 0.2)
+          : AppColors.textMuted.withValues(alpha: 0.5);
+    }
+
     if (isSelected) {
-      background = AppColors.primary;
+      background = AppColors.accent;
       textColor = AppColors.white;
       hijriColor = AppColors.white.withValues(alpha: 0.8);
     } else if (isToday) {
-      background = AppColors.primary.withValues(alpha: 0.1);
-      textColor = AppColors.primary;
-      hijriColor = AppColors.primary.withValues(alpha: 0.8);
+      background = isDarkBg
+          ? AppColors.white.withValues(alpha: 0.2)
+          : AppColors.primary.withValues(alpha: 0.1);
+      textColor = isDarkBg ? AppColors.white : AppColors.primary;
+      hijriColor = isDarkBg
+          ? AppColors.white.withValues(alpha: 0.8)
+          : AppColors.primary.withValues(alpha: 0.8);
     }
 
     final masehiText = '${date.day}';
@@ -68,12 +83,15 @@ class DualCalendarCell extends StatelessWidget {
           color: background,
           shape: BoxShape.circle,
           border: isToday && !isSelected
-              ? Border.all(color: AppColors.primary, width: 2.0)
+              ? Border.all(
+                  color: isDarkBg ? AppColors.white : AppColors.primary,
+                  width: 2.0,
+                )
               : null,
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: AppColors.primary.withValues(alpha: 0.3),
+                    color: AppColors.black.withValues(alpha: 0.1),
                     blurRadius: 8,
                     offset: const Offset(0, 4),
                   ),

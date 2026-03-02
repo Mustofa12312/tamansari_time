@@ -18,7 +18,8 @@ class CalendarScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.surface,
+      backgroundColor: Colors.transparent,
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.transparent,
@@ -28,18 +29,22 @@ class CalendarScreen extends StatelessWidget {
               AppStrings.calendar,
               style: AppTypography.titleMedium.copyWith(
                 fontWeight: FontWeight.bold,
+                color: AppColors.textPrimary,
               ),
             ),
             Text(
               'Hijriah & Masehi',
-              style: AppTypography.bodySmall.copyWith(color: AppColors.accent),
+              style: AppTypography.bodySmall.copyWith(
+                color: AppColors.textPrimary.withValues(alpha: 0.8),
+              ),
             ),
           ],
         ),
         centerTitle: true,
+        iconTheme: IconThemeData(color: AppColors.textPrimary),
         actions: [
           IconButton(
-            icon: Icon(Icons.swap_calls_rounded, color: AppColors.accent),
+            icon: Icon(Icons.swap_calls_rounded, color: AppColors.textPrimary),
             onPressed: () {
               HapticFeedback.lightImpact();
               context.read<CalendarCubit>().toggleCalendarPrimary();
@@ -47,7 +52,7 @@ class CalendarScreen extends StatelessWidget {
             tooltip: 'Tukar Hijriah/Masehi',
           ),
           IconButton(
-            icon: Icon(Icons.today_rounded, color: AppColors.textSecondary),
+            icon: Icon(Icons.today_rounded, color: AppColors.textPrimary),
             onPressed: () {
               HapticFeedback.lightImpact();
               context.read<CalendarCubit>().goToToday();
@@ -57,41 +62,39 @@ class CalendarScreen extends StatelessWidget {
           const SizedBox(width: 8),
         ],
       ),
-      body: BlocBuilder<CalendarCubit, CalendarState>(
-        builder: (context, calState) {
-          return Column(
-            children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16.0,
-                      vertical: 8.0,
-                    ),
-                    child: Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: AppColors.cardDark,
-                        borderRadius: BorderRadius.circular(24),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.05),
-                            blurRadius: 15,
-                            offset: const Offset(0, 8),
-                          ),
-                        ],
+      body: SafeArea(
+        child: BlocBuilder<CalendarCubit, CalendarState>(
+          builder: (context, calState) {
+            return Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20.0,
+                        vertical: 12.0,
                       ),
-                      child: calState.showHijriAsPrimary
-                          ? _buildHijriCalendar(context, calState)
-                          : _buildGregorianCalendar(context, calState),
+                      child: Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: AppColors.textPrimary.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(32),
+                          border: Border.all(
+                            color: AppColors.textPrimary.withValues(alpha: 0.1),
+                          ),
+                        ),
+                        child: calState.showHijriAsPrimary
+                            ? _buildHijriCalendar(context, calState)
+                            : _buildGregorianCalendar(context, calState),
+                      ),
                     ),
                   ),
                 ),
-              ),
-              _DayInfoPanel(selectedDay: calState.selectedDay),
-            ],
-          );
-        },
+                _DayInfoPanel(selectedDay: calState.selectedDay),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
@@ -123,38 +126,47 @@ class CalendarScreen extends StatelessWidget {
           formatButtonVisible: false,
           leftChevronIcon: Icon(
             Icons.chevron_left_rounded,
-            color: AppColors.textSecondary,
+            color: AppColors.textPrimary,
           ),
           rightChevronIcon: Icon(
             Icons.chevron_right_rounded,
-            color: AppColors.textSecondary,
+            color: AppColors.textPrimary,
           ),
         ),
         daysOfWeekStyle: DaysOfWeekStyle(
           weekdayStyle: AppTypography.labelSmall.copyWith(
-            color: AppColors.textMuted,
+            color: AppColors.textPrimary.withValues(alpha: 0.6),
             fontWeight: FontWeight.bold,
           ),
           weekendStyle: AppTypography.labelSmall.copyWith(
-            color: AppColors.accent.withValues(alpha: 0.8),
+            color: AppColors.accent,
             fontWeight: FontWeight.bold,
           ),
         ),
         calendarBuilders: CalendarBuilders(
-          defaultBuilder: (ctx, day, focusedDay) =>
-              DualCalendarCell(date: day, isHijriPrimary: false),
-          todayBuilder: (ctx, day, focusedDay) =>
-              DualCalendarCell(date: day, isToday: true, isHijriPrimary: false),
+          defaultBuilder: (ctx, day, focusedDay) => DualCalendarCell(
+            date: day,
+            isHijriPrimary: false,
+            isDarkBg: true,
+          ),
+          todayBuilder: (ctx, day, focusedDay) => DualCalendarCell(
+            date: day,
+            isToday: true,
+            isHijriPrimary: false,
+            isDarkBg: true,
+          ),
           selectedBuilder: (ctx, day, focusedDay) => DualCalendarCell(
             date: day,
             isSelected: true,
             isToday: isSameDay(day, DateTime.now()),
             isHijriPrimary: false,
+            isDarkBg: true,
           ),
           outsideBuilder: (ctx, day, focusedDay) => DualCalendarCell(
             date: day,
             isOutside: true,
             isHijriPrimary: false,
+            isDarkBg: true,
           ),
         ),
       ),
@@ -207,7 +219,7 @@ class CalendarScreen extends StatelessWidget {
                 IconButton(
                   icon: Icon(
                     Icons.chevron_left_rounded,
-                    color: AppColors.textSecondary,
+                    color: AppColors.textPrimary,
                   ),
                   onPressed: () {
                     HapticFeedback.lightImpact();
@@ -224,7 +236,7 @@ class CalendarScreen extends StatelessWidget {
                 IconButton(
                   icon: Icon(
                     Icons.chevron_right_rounded,
-                    color: AppColors.textSecondary,
+                    color: AppColors.textPrimary,
                   ),
                   onPressed: () {
                     HapticFeedback.lightImpact();
@@ -246,8 +258,8 @@ class CalendarScreen extends StatelessWidget {
                       arabicDays[index],
                       style: AppTypography.labelSmall.copyWith(
                         color: (index == 5 || index == 6)
-                            ? AppColors.accent.withValues(alpha: 0.8)
-                            : AppColors.textMuted,
+                            ? AppColors.accent
+                            : AppColors.textPrimary.withValues(alpha: 0.6),
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -274,6 +286,7 @@ class CalendarScreen extends StatelessWidget {
                   date: date,
                   isOutside: true,
                   isHijriPrimary: true,
+                  isDarkBg: true,
                   onTap: () {
                     HapticFeedback.selectionClick();
                     context.read<CalendarCubit>().selectDay(date, date);
@@ -287,6 +300,7 @@ class CalendarScreen extends StatelessWidget {
                   isSelected: isSameDay(date, calState.selectedDay),
                   isToday: isSameDay(date, DateTime.now()),
                   isHijriPrimary: true,
+                  isDarkBg: true,
                   onTap: () {
                     HapticFeedback.selectionClick();
                     context.read<CalendarCubit>().selectDay(
@@ -320,35 +334,28 @@ class _DayInfoPanel extends StatelessWidget {
         '${hijri.hDay} ${hijri.longMonthNameIndo} ${hijri.hYear} H';
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
       decoration: BoxDecoration(
-        color: AppColors.cardDark,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.glassBorder),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 15,
-            offset: const Offset(0, 6),
-          ),
-        ],
+        color: AppColors.textPrimary.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(32),
+        border: Border.all(color: AppColors.textPrimary.withValues(alpha: 0.1)),
       ),
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.1),
+              color: AppColors.textPrimary.withValues(alpha: 0.2),
               shape: BoxShape.circle,
             ),
             child: Icon(
               Icons.event_note_rounded,
-              color: AppColors.primary,
-              size: 24,
+              color: AppColors.textPrimary,
+              size: 28,
             ),
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: 20),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -360,11 +367,11 @@ class _DayInfoPanel extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 6),
                 Text(
                   gregorianStr,
                   style: AppTypography.labelMedium.copyWith(
-                    color: AppColors.textSecondary,
+                    color: AppColors.textPrimary.withValues(alpha: 0.7),
                   ),
                 ),
               ],

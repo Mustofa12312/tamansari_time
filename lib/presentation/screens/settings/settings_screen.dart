@@ -13,7 +13,7 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.surface,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.transparent,
@@ -26,7 +26,10 @@ class SettingsScreen extends StatelessWidget {
         ),
         title: Text(
           AppStrings.settings,
-          style: AppTypography.titleLarge.copyWith(fontWeight: FontWeight.bold),
+          style: AppTypography.titleLarge.copyWith(
+            fontWeight: FontWeight.bold,
+            color: AppColors.textPrimary,
+          ),
         ),
         centerTitle: true,
       ),
@@ -48,7 +51,12 @@ class SettingsScreen extends StatelessWidget {
                           context.read<SettingsCubit>().setDarkMode(val),
                       icon: Icons.dark_mode_rounded,
                     ),
-                    Divider(color: AppColors.divider, height: 1),
+                    Divider(
+                      color: AppColors.textPrimary.withValues(alpha: 0.1),
+                      height: 1,
+                      indent: 16,
+                      endIndent: 16,
+                    ),
                     _buildSwitchTile(
                       title: 'Otomatis',
                       subtitle: 'Ikuti waktu matahari (Malam = Gelap)',
@@ -67,23 +75,29 @@ class SettingsScreen extends StatelessWidget {
                 child: ListTile(
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: 16,
-                    vertical: 4,
+                    vertical: 8,
                   ),
                   leading: Icon(
                     Icons.calculate_rounded,
-                    color: AppColors.primary,
+                    color: AppColors.textPrimary,
                   ),
                   title: Text(
                     _getMethodName(settings.method),
-                    style: AppTypography.titleMedium,
+                    style: AppTypography.titleMedium.copyWith(
+                      color: AppColors.textPrimary,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   subtitle: Text(
                     'Metode perhitungan waktu shalat',
-                    style: AppTypography.labelSmall,
+                    style: AppTypography.labelSmall.copyWith(
+                      color: AppColors.textPrimary.withValues(alpha: 0.7),
+                    ),
                   ),
-                  trailing: const Icon(
+                  trailing: Icon(
                     Icons.arrow_forward_ios_rounded,
                     size: 16,
+                    color: AppColors.textPrimary,
                   ),
                   onTap: () => _showMethodPicker(context, settings),
                 ),
@@ -163,7 +177,8 @@ class SettingsScreen extends StatelessWidget {
                 child: Text(
                   'Kembali ke Pengaturan Default',
                   style: AppTypography.labelMedium.copyWith(
-                    color: AppColors.error,
+                    color: AppColors.accent,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
@@ -177,13 +192,13 @@ class SettingsScreen extends StatelessWidget {
 
   Widget _buildSectionTitle(String title) {
     return Padding(
-      padding: const EdgeInsets.only(left: 8, bottom: 8),
+      padding: const EdgeInsets.only(left: 8, bottom: 12),
       child: Text(
         title.toUpperCase(),
         style: AppTypography.labelSmall.copyWith(
-          color: AppColors.textMuted,
-          fontWeight: FontWeight.bold,
-          letterSpacing: 1.2,
+          color: AppColors.textPrimary.withValues(alpha: 0.7),
+          fontWeight: FontWeight.w900,
+          letterSpacing: 2.0,
         ),
       ),
     );
@@ -192,17 +207,13 @@ class SettingsScreen extends StatelessWidget {
   Widget _buildSettingCard({required Widget child}) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.cardDark,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        color: AppColors.textPrimary.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(28),
+        border: Border.all(
+          color: AppColors.textPrimary.withValues(alpha: 0.05),
+        ),
       ),
-      child: ClipRRect(borderRadius: BorderRadius.circular(24), child: child),
+      child: ClipRRect(borderRadius: BorderRadius.circular(28), child: child),
     );
   }
 
@@ -219,11 +230,22 @@ class SettingsScreen extends StatelessWidget {
         HapticFeedback.selectionClick();
         onChanged(val);
       },
-      secondary: Icon(icon, color: AppColors.primary),
-      title: Text(title, style: AppTypography.titleMedium),
-      subtitle: Text(subtitle, style: AppTypography.labelSmall),
-      activeThumbColor: AppColors.primary,
-      activeTrackColor: AppColors.primary.withValues(alpha: 0.3),
+      secondary: Icon(icon, color: AppColors.textPrimary),
+      title: Text(
+        title,
+        style: AppTypography.titleMedium.copyWith(
+          color: AppColors.textPrimary,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      subtitle: Text(
+        subtitle,
+        style: AppTypography.labelSmall.copyWith(
+          color: AppColors.textPrimary.withValues(alpha: 0.6),
+        ),
+      ),
+      activeThumbColor: AppColors.accent,
+      activeTrackColor: AppColors.accent.withValues(alpha: 0.3),
     );
   }
 
@@ -235,16 +257,23 @@ class SettingsScreen extends StatelessWidget {
     IconData icon,
   ) {
     return ListTile(
-      leading: Icon(icon, color: AppColors.textMuted, size: 20),
-      title: Text(name, style: AppTypography.bodyLarge),
+      leading: Icon(
+        icon,
+        color: AppColors.textPrimary.withValues(alpha: 0.5),
+        size: 20,
+      ),
+      title: Text(
+        name,
+        style: AppTypography.bodyLarge.copyWith(color: AppColors.textPrimary),
+      ),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           IconButton(
             icon: Icon(
               Icons.remove_circle_outline,
-              color: AppColors.error.withValues(alpha: 0.7),
-              size: 18,
+              color: AppColors.textPrimary.withValues(alpha: 0.5),
+              size: 20,
             ),
             onPressed: () {
               HapticFeedback.lightImpact();
@@ -252,12 +281,12 @@ class SettingsScreen extends StatelessWidget {
             },
           ),
           SizedBox(
-            width: 30,
+            width: 36,
             child: Text(
               '${currentValue > 0 ? "+" : ""}$currentValue',
               textAlign: TextAlign.center,
               style: AppTypography.titleMedium.copyWith(
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w900,
                 color: currentValue != 0
                     ? AppColors.accent
                     : AppColors.textPrimary,
@@ -267,8 +296,8 @@ class SettingsScreen extends StatelessWidget {
           IconButton(
             icon: Icon(
               Icons.add_circle_outline,
-              color: AppColors.success.withValues(alpha: 0.7),
-              size: 18,
+              color: AppColors.textPrimary,
+              size: 20,
             ),
             onPressed: () {
               HapticFeedback.lightImpact();
@@ -306,13 +335,14 @@ class SettingsScreen extends StatelessWidget {
   void _showMethodPicker(BuildContext context, PrayerSettings settings) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: AppColors.cardDark,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
-      ),
+      backgroundColor: Colors.transparent,
       builder: (context) {
         return Container(
           padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: AppColors.primaryDark,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -320,7 +350,7 @@ class SettingsScreen extends StatelessWidget {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: AppColors.divider,
+                  color: AppColors.textPrimary.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -329,12 +359,14 @@ class SettingsScreen extends StatelessWidget {
                 'Metode Perhitungan',
                 style: AppTypography.titleLarge.copyWith(
                   fontWeight: FontWeight.bold,
+                  color: AppColors.textPrimary,
                 ),
               ),
               const SizedBox(height: 16),
               Flexible(
                 child: ListView.builder(
                   shrinkWrap: true,
+                  physics: const BouncingScrollPhysics(),
                   itemCount: PrayerCalculationMethod.values.length,
                   itemBuilder: (context, index) {
                     final method = PrayerCalculationMethod.values[index];
@@ -344,14 +376,17 @@ class SettingsScreen extends StatelessWidget {
                         _getMethodName(method),
                         style: AppTypography.titleMedium.copyWith(
                           color: isSelected
-                              ? AppColors.primary
+                              ? AppColors.accent
                               : AppColors.textPrimary,
+                          fontWeight: isSelected
+                              ? FontWeight.bold
+                              : FontWeight.normal,
                         ),
                       ),
                       trailing: isSelected
                           ? Icon(
                               Icons.check_circle_rounded,
-                              color: AppColors.primary,
+                              color: AppColors.accent,
                             )
                           : null,
                       onTap: () {
