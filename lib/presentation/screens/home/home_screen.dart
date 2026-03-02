@@ -61,21 +61,42 @@ class _HomeScreenState extends State<HomeScreen> {
                       ? state.location.city
                       : 'Jakarta, Indonesia';
                 }
-                return Row(
-                  children: [
-                    Icon(
-                      Icons.location_on_rounded,
-                      size: 12,
-                      color: AppColors.accent,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      city,
-                      style: AppTypography.labelSmall.copyWith(
-                        color: AppColors.textSecondary,
+                return GestureDetector(
+                  onTap: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: const Text('Sedang mencari lokasi akurat...'),
+                        backgroundColor: AppColors.primary,
+                        duration: const Duration(seconds: 2),
                       ),
-                    ),
-                  ],
+                    );
+                    context.read<PrayerBloc>().add(
+                      const LoadPrayerTimes(forceLocationRefresh: true),
+                    );
+                  },
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.map_rounded,
+                        size: 14,
+                        color: AppColors.primaryLight,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        city,
+                        style: AppTypography.labelSmall.copyWith(
+                          color: AppColors.textSecondary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      Icon(
+                        Icons.my_location_rounded,
+                        size: 14,
+                        color: AppColors.accent,
+                      ),
+                    ],
+                  ),
                 );
               },
             ),

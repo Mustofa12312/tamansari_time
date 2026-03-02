@@ -15,6 +15,8 @@ class LocationService {
     if (!forceRefresh) {
       final cached = _getCachedLocation();
       if (cached != null) return cached;
+      return LocationModel
+          .defaultJakarta; // Return Jakarta if no cache and no force refresh
     }
 
     // Step 1: Check and request permission
@@ -61,7 +63,8 @@ class LocationService {
         position.longitude,
       ).timeout(const Duration(seconds: 5));
       if (placemarks.isNotEmpty) {
-        city = placemarks.first.locality ??
+        city =
+            placemarks.first.locality ??
             placemarks.first.subAdministrativeArea ??
             '';
         country = placemarks.first.country ?? 'Indonesia';
